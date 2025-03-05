@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #007bff;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+        }
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .feature-card {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .feature-card a {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .feature-card a:hover {
+            background: #0056b3;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            width: 100%;
+            text-decoration: none;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>User Panel</h2>
+        <a href="#">Home</a>
+        <a href="#">Mentorship Programs</a>
+        <a href="#">Job Opportunities</a>
+        <a href="#">Reports & Safety</a>
+        <a href="#">Health & Well-being</a>
+        <a href="#">Profile</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome, User</h1>
+            <p>Explore opportunities, connect, and empower yourself.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Mentorship Programs</h3>
+                <p>Find a mentor and grow your career.</p>
+                <a href="#">Join Now</a>
+            </div>
+            <div class="feature-card">
+                <h3>Job Opportunities</h3>
+                <p>Explore scholarships and job listings.</p>
+                <a href="#">View Jobs</a>
+            </div>
+            <div class="feature-card">
+                <h3>Report Issues</h3>
+                <p>Report discrimination anonymously.</p>
+                <a href="#">Submit Report</a>
+            </div>
+            <div class="feature-card">
+                <h3>Health & Well-being</h3>
+                <p>Access resources for mental and physical health.</p>
+                <a href="#">Explore</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Empower Women Initiative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#FF6B6B] via-[#4ECDC4] to-[#45B7D1] min-h-screen flex flex-col overflow-x-hidden">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-0 left-0 w-full bg-white/20 backdrop-blur-md z-50 shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img src="{{ url_for('static', filename='uploads/logo.jpg') }}" alt="SDG5 Logo" class="h-10 w-10 rounded-full">
+                <span class="text-white font-bold text-xl tracking-wider">Empower Women Initiative</span>
+            </div>
+            
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="hamburger-btn" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex space-x-6 text-white">
+                <a href="{{ url_for('home') }}" class="hover:text-[#FF6B6B] transition-colors">Home</a>
+                <a href="{{ url_for('about') }}" class="hover:text-[#4ECDC4] transition-colors">About</a>
+                <a href="{{ url_for('programs') }}" class="hover:text-[#45B7D1] transition-colors">Programs</a>
+                <a href="{{ url_for('get_involved') }}" class="hover:text-[#FF6B6B] transition-colors">Get Involved</a>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white/20 backdrop-blur-md">
+            <div class="px-4 pt-2 pb-4 space-y-2">
+                <a href="{{ url_for('home') }}" class="block text-white py-2 hover:bg-white/10">Home</a>
+                <a href="{{ url_for('about') }}" class="block text-white py-2 hover:bg-white/10">About</a>
+                <a href="{{ url_for('programs') }}" class="block text-white py-2 hover:bg-white/10">Programs</a>
+                <a href="{{ url_for('get_involved') }}" class="block text-white py-2 hover:bg-white/10">Get Involved</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Form Container -->
+    <div class="flex-grow flex items-center justify-center pt-24 pb-10 px-4">
+        <div class="w-full max-w-md">
+            <div class="bg-white shadow-2xl rounded-2xl overflow-hidden transform transition-all hover:scale-[1.02]">
+                <div class="bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] p-6 text-center">
+                    <h2 class="text-3xl font-bold text-white tracking-wide">Contact Us</h2>
+                    <p class="text-white/80 mt-2">Empowering Change, One Message at a Time</p>
+                </div>
+                
+                <form id="contactForm" class="p-6 space-y-6">
+                    <div class="relative group">
+                        <input 
+                            type="text" 
+                            id="name" 
+                            required 
+                            class="peer w-full border-b-2 border-[#45B7D1] focus:border-[#FF6B6B] transition-colors duration-300 py-2 pl-10 pr-4 placeholder-transparent focus:outline-none"
+                            placeholder="Full Name"
+                        />
+                        <label 
+                            for="name" 
+                            class="absolute left-10 -top-4 text-[#4ECDC4] text-sm transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-4 peer-focus:text-sm peer-focus:text-[#FF6B6B]"
+                        >
+                            Full Name
+                        </label>
+                        <i data-feather="user" class="absolute left-2 top-2 text-[#45B7D1] group-focus-within:text-[#FF6B6B] transition-colors"></i>
+                    </div>
+
+                    <div class="relative group">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            required 
+                            class="peer w-full border-b-2 border-[#45B7D1] focus:border-[#FF6B6B] transition-colors duration-300 py-2 pl-10 pr-4 placeholder-transparent focus:outline-none"
+                            placeholder="Email Address"
+                        />
+                        <label 
+                            for="email" 
+                            class="absolute left-10 -top-4 text-[#4ECDC4] text-sm transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-4 peer-focus:text-sm peer-focus:text-[#FF6B6B]"
+                        >
+                            Email Address
+                        </label>
+                        <i data-feather="mail" class="absolute left-2 top-2 text-[#45B7D1] group-focus-within:text-[#FF6B6B] transition-colors"></i>
+                    </div>
+
+                    <div class="relative group">
+                        <textarea 
+                            id="message" 
+                            rows="4" 
+                            maxlength="500" 
+                            required 
+                            class="peer w-full border-b-2 border-[#45B7D1] focus:border-[#FF6B6B] transition-colors duration-300 py-2 pl-10 pr-4 placeholder-transparent focus:outline-none resize-none"
+                            placeholder="Your Message"
+                        ></textarea>
+                        <label 
+                            for="message" 
+                            class="absolute left-10 -top-4 text-[#4ECDC4] text-sm transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-focus:-top-4 peer-focus:text-sm peer-focus:text-[#FF6B6B]"
+                        >
+                            Your Message
+                        </label>
+                        <i data-feather="message-circle" class="absolute left-2 top-2 text-[#45B7D1] group-focus-within:text-[#FF6B6B] transition-colors"></i>
+                        <div id="char-counter" class="text-right text-sm text-[#4ECDC4] mt-1">500 characters left</div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="w-full bg-gradient-to-r from-[#FF6B6B] to-[#4ECDC4] text-white py-3 rounded-lg hover:from-[#FF5252] hover:to-[#36CDC4] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:ring-opacity-50"
+                    >
+                        Send Message
+                    </button>
+                </form>
+
+                <div class="bg-gray-100 p-4 text-center">
+                    <p class="text-sm text-gray-600">
+                        Operating Hours: Mon-Fri, 9 AM - 5 PM (EAT)
+                    </p>
+                    <div class="flex justify-center space-x-4 mt-3">
+                        <a href="https://facebook.com" target="_blank" class="text-[#45B7D1] hover:text-[#FF6B6B] transition-colors">
+                            <i data-feather="facebook"></i>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="text-[#45B7D1] hover:text-[#4ECDC4] transition-colors">
+                            <i data-feather="twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const isClickInsideMenu = mobileMenu.contains(event.target);
+            const isClickOnHamburger = hamburgerBtn.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickOnHamburger && !mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        });
+
+        // Character Counter
+        const messageField = document.getElementById('message');
+        const charCounter = document.getElementById('char-counter');
+        const maxChars = 500;
+
+        messageField.addEventListener('input', () => {
+            const remaining = maxChars - messageField.value.length;
+            charCounter.textContent = `${remaining} characters left`;
+            charCounter.style.color = remaining < 0 ? 'red' : '';
+        });
+
+        // WhatsApp Submission
+        document.getElementById('contactForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            
+            if (!name || !email || !message) {
+                alert('Please fill out all fields before submitting!');
+                return;
+            }
+
+            const whatsappMessage = `Hello, my name is ${name}. Email: ${email}. Message: ${message}`;
+            const whatsappURL = `https://wa.me/254787205456?text=${encodeURIComponent(whatsappMessage)}`;
+
+            window.location.href = whatsappURL;
+        });
+
+        // Initialize Feather Icons
+        feather.replace();
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship Program</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #007bff;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
+        }
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .mentorship-section {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .mentorship-form {
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: auto;
+        }
+        .mentorship-form label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .mentorship-form input, .mentorship-form select, .mentorship-form button {
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .mentorship-form button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        .mentorship-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Mentorship</h2>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="mentorship.html">Mentorship Program</a>
+        <a href="#">Job Opportunities</a>
+        <a href="#">Reports & Safety</a>
+        <a href="#">Health & Well-being</a>
+        <a href="#">Profile</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Mentorship Program</h1>
+            <p>Connect with mentors and grow your skills.</p>
+        </div>
+
+        <div class="mentorship-section">
+            <h2>Apply for Mentorship</h2>
+            <form class="mentorship-form" action="/apply_mentorship" method="POST">
+                <label for="mentor_name">Preferred Mentor</label>
+                <input type="text" id="mentor_name" name="mentor_name" placeholder="Mentor's Name" required>
+
+                <label for="mentee_name">Your Name</label>
+                <input type="text" id="mentee_name" name="mentee_name" placeholder="Your Name" required>
+
+                <label for="topic">Mentorship Topic</label>
+                <select id="topic" name="topic">
+                    <option value="Career Development">Career Development</option>
+                    <option value="Leadership">Leadership</option>
+                    <option value="Entrepreneurship">Entrepreneurship</option>
+                    <option value="Technology">Technology</option>
+                </select>
+
+                <button type="submit">Apply Now</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

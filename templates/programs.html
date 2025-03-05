@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Programs - Empower Women Initiative</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --secondary-color: #6a1b9a;
+            --accent-color: #ffcc80;
+            --text-color: #333;
+            --background-color: #f4f4f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, var(--background-color), #e0e0f5);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .program-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .program-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .program-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .cta-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px;
+            background: var(--accent-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #ffb74d;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Our Programs</h1>
+    </header>
+
+    <div class="container">
+        <section class="program-grid">
+            <div class="program-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Educational Scholarships</h3>
+                <p>Providing financial support and mentorship to help girls pursue higher education and achieve their academic dreams.</p>
+            </div>
+            <div class="program-card">
+                <i class="fas fa-briefcase"></i>
+                <h3>Entrepreneurship Training</h3>
+                <p>Equipping women with business skills, financial literacy, and networking opportunities to start and grow their own businesses.</p>
+            </div>
+            <div class="program-card">
+                <i class="fas fa-hands-helping"></i>
+                <h3>Leadership Development</h3>
+                <p>Empowering women through leadership workshops, confidence-building programs, and professional development resources.</p>
+            </div>
+            <div class="program-card">
+                <i class="fas fa-female"></i>
+                <h3>Mentorship Program</h3>
+                <p>Connecting aspiring women with experienced professionals for guidance, support, and career advancement.</p>
+            </div>
+        </section>
+
+        <a href="{{ url_for('get_involved') }}" class="cta-button">Get Involved</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Empower Women Initiative. Transforming Lives Through Education and Opportunity.</p>
+    </footer>
+</body>
+</html>

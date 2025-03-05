@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Empower Women Initiative</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a148c;
+            --secondary-color: #6a1b9a;
+            --accent-color: #ffcc80;
+            --text-color: #333;
+            --background-color: #f4f4f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Arial', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, var(--background-color), #e0e0f5);
+            color: var(--text-color);
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--accent-color);
+        }
+
+        nav {
+            background: var(--secondary-color);
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .about-section {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .about-content {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 2;
+        }
+
+        .about-image {
+            flex: 1;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .about-section h2 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .mission-vision {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .mission, .vision {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .mission h3, .vision h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                flex-direction: column;
+            }
+
+            .mission-vision {
+                flex-direction: column;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            nav a {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Empower Women Initiative</h1>
+        <div class="social-icons">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        </div>
+    </header>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('programs') }}">Programs</a>
+        <a href="{{ url_for('get_involved') }}">Get Involved</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('login') }}">Login</a>
+    </nav>
+
+    <main class="content">
+        <section class="about-section">
+            <h2>About Empower Women Initiative</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Founded in 2020, the Empower Women Initiative is a dynamic non-profit organization dedicated to transforming the lives of women and girls through comprehensive, sustainable empowerment strategies. We believe that when women are supported, educated, and given the right opportunities, they can become powerful agents of change in their communities and beyond.</p>
+                    
+                    <p>Our journey began with a simple yet profound vision: to dismantle systemic barriers that prevent women from reaching their full potential. We recognized that women face unique challenges in education, economic opportunities, and leadership roles, and we committed ourselves to creating meaningful, lasting solutions.</p>
+                </div>
+                <div class="about-image">
+                    <img src="{{ url_for('static', filename='uploads/team-photo.jpg') }}" alt="Empower Women Initiative Team">
+                </div>
+            </div>
+
+            <div class="mission-vision">
+                <div class="mission">
+                    <h3>Our Mission</h3>
+                    <p>To create sustainable opportunities for women and girls by providing targeted education, entrepreneurship support, and leadership development programs. We aim to break down social and economic barriers, fostering an environment where women can thrive, lead, and inspire change in their communities.</p>
+                </div>
+                <div class="vision">
+                    <h3>Our Vision</h3>
+                    <p>A world where every woman and girl has the resources, education, and support to pursue her dreams, contribute to her community, and lead with confidence. We envision a future of gender equality, where opportunities are not limited by gender, but defined by potential and passion.</p>
+                </div>
+            </div>
+
+            <div class="our-values" style="margin-top: 30px;">
+                <h3 style="color: var(--primary-color); text-align: center; margin-bottom: 20px;">Our Core Values</h3>
+                <div class="value-list" style="display: flex; justify-content: space-between; text-align: center;">
+                    <div style="flex: 1; padding: 15px; background: #f9f9f9; margin: 0 10px; border-radius: 10px;">
+                        <h4 style="color: var(--secondary-color);">Empowerment</h4>
+                        <p>Believing in the inherent strength and potential of every woman</p>
+                    </div>
+                    <div style="flex: 1; padding: 15px; background: #f9f9f9; margin: 0 10px; border-radius: 10px;">
+                        <h4 style="color: var(--secondary-color);">Inclusivity</h4>
+                        <p>Celebrating diversity and ensuring equal opportunities for all</p>
+                    </div>
+                    <div style="flex: 1; padding: 15px; background: #f9f9f9; margin: 0 10px; border-radius: 10px;">
+                        <h4 style="color: var(--secondary-color);">Collaboration</h4>
+                        <p>Working together to create systemic and sustainable change</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Empower Women Initiative. All Rights Reserved.</p>
+        <p>Registered Non-Profit | Empowering Women, Transforming Communities</p>
+    </footer>
+</body>
+</html>
