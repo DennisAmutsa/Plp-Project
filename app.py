@@ -1,9 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pymysql
 import bcrypt
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+# Configure upload folder
+UPLOAD_FOLDER = 'static/uploads/profile_pics'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure the upload directory exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 # MySQL Database Connection
 DB_HOST = 'localhost'
@@ -14,8 +25,11 @@ DB_NAME = 'gender_equality_db'
 def connect_db():
     return pymysql.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME, cursorclass=pymysql.cursors.DictCursor)
 
-# Routes
+# Function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Routes
 @app.route('/')
 def home():
     return render_template('index.html', title="Home")
@@ -70,7 +84,60 @@ def dashboard():
         flash('Please log in first.', 'warning')
         return redirect(url_for('login'))
     
-    return render_template('dashboard.html', title="Dashboard")
+    if session.get('role') == 'admin':
+        return render_template('admin_dashboard.html', title="Admin Dashboard")
+    
+    return render_template('dashboard.html', title="User Dashboard")
+
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        flash('Please log in first.', 'warning')
+        return redirect(url_for('login'))
+
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id=%s", (session['user_id'],))
+    user = cursor.fetchone()
+    conn.close()
+
+    if not user:
+        flash('User not found.', 'danger')
+        return redirect(url_for('login'))
+
+    return render_template('profile.html', title="Profile", user=user)
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    if 'user_id' not in session:
+        flash('Please log in first.', 'warning')
+        return redirect(url_for('login'))
+
+    name = request.form['name']
+    email = request.form['email']
+    profile_picture = request.files.get('profile_picture')
+
+    profile_pic_path = None
+
+    if profile_picture and allowed_file(profile_picture.filename):
+        filename = secure_filename(profile_picture.filename)
+        profile_pic_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        profile_picture.save(profile_pic_path)
+        profile_pic_path = profile_pic_path.replace('static/', '')  # Store relative path
+
+    conn = connect_db()
+    cursor = conn.cursor()
+    
+    if profile_pic_path:
+        cursor.execute("UPDATE users SET name=%s, email=%s, profile_picture=%s WHERE id=%s", (name, email, profile_pic_path, session['user_id']))
+    else:
+        cursor.execute("UPDATE users SET name=%s, email=%s WHERE id=%s", (name, email, session['user_id']))
+
+    conn.commit()
+    conn.close()
+
+    flash('Profile updated successfully!', 'success')
+    return redirect(url_for('profile'))
 
 @app.route('/mentorship')
 def mentorship():
@@ -133,9 +200,18 @@ def logout():
 @app.route('/get-involved')
 def get_involved():
     return render_template('get_involved.html', title="Get Involved")
+
 @app.route('/programs')
 def programs():
     return render_template('programs.html', title="Our Programs")
+
+@app.route('/jobs')
+def jobs():
+    return render_template('jobs.html', title="Job Opportunities")
+
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    return render_template('change_password.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
