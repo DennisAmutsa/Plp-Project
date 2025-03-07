@@ -127,7 +127,7 @@ def update_profile():
 
     conn = connect_db()
     cursor = conn.cursor()
-    
+            
     if profile_pic_path:
         cursor.execute("UPDATE users SET name=%s, email=%s, profile_picture=%s WHERE id=%s", (name, email, profile_pic_path, session['user_id']))
     else:
