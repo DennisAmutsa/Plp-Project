@@ -114,25 +114,35 @@ def update_profile():
         return redirect(url_for('login'))
 
     name = request.form['name']
-    email = request.form['email']
-    profile_picture = request.files.get('profile_picture')
-
-    profile_pic_path = None
-
-    if profile_picture and allowed_file(profile_picture.filename):
-        filename = secure_filename(profile_picture.filename)
-        profile_pic_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        profile_picture.save(profile_pic_path)
-        profile_pic_path = profile_pic_path.replace('static/', '')  # Store relative path
+    # email is readonly in the form, so we don't update it
+    phone = request.form['phone']
+    bio = request.form['bio']
+    profile_image = request.files.get('profile_image')  # Updated field name to match the HTML
 
     conn = connect_db()
     cursor = conn.cursor()
-            
-    if profile_pic_path:
-        cursor.execute("UPDATE users SET name=%s, email=%s, profile_picture=%s WHERE id=%s", (name, email, profile_pic_path, session['user_id']))
-    else:
-        cursor.execute("UPDATE users SET name=%s, email=%s WHERE id=%s", (name, email, session['user_id']))
+    
+    # Start with basic profile information update
+    query_params = [name, phone, bio, session['user_id']]
+    update_query = "UPDATE users SET name=%s, phone=%s, bio=%s"
+    
+    # Handle profile picture if uploaded
+    if profile_image and profile_image.filename and allowed_file(profile_image.filename):
+        filename = secure_filename(f"user_{session['user_id']}_{profile_image.filename}")
+        # Save file to filesystem
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        profile_image.save(file_path)
+        
+        # Store the relative path in database
+        db_path = f"uploads/profile_pics/{filename}"
+        update_query += ", profile_image=%s"  # Updated column name to match HTML
+        query_params.insert(-1, db_path)  # Insert before the user_id
 
+    # Finalize the query
+    update_query += " WHERE id=%s"
+    
+    # Execute update query
+    cursor.execute(update_query, tuple(query_params))
     conn.commit()
     conn.close()
 
@@ -211,7 +221,38 @@ def jobs():
 
 @app.route('/change_password', methods=['GET', 'POST'])
 def change_password():
-    return render_template('change_password.html')
+    if request.method == 'POST':
+        if 'user_id' not in session:
+            flash('Please log in first.', 'warning')
+            return redirect(url_for('login'))
+            
+        current_password = request.form['current_password'].encode('utf-8')
+        new_password = request.form['new_password'].encode('utf-8')
+        confirm_password = request.form['confirm_password'].encode('utf-8')
+        
+        if new_password != confirm_password:
+            flash('New passwords do not match.', 'danger')
+            return redirect(url_for('change_password'))
+            
+        conn = connect_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM users WHERE id=%s", (session['user_id'],))
+        user = cursor.fetchone()
+        
+        if not user or not bcrypt.checkpw(current_password, user['password'].encode('utf-8')):
+            flash('Current password is incorrect.', 'danger')
+            conn.close()
+            return redirect(url_for('change_password'))
+            
+        hashed_new_password = bcrypt.hashpw(new_password, bcrypt.gensalt())
+        cursor.execute("UPDATE users SET password=%s WHERE id=%s", (hashed_new_password, session['user_id']))
+        conn.commit()
+        conn.close()
+        
+        flash('Password changed successfully!', 'success')
+        return redirect(url_for('profile'))
+        
+    return render_template('change_password.html', title="Change Password")
 
 if __name__ == '__main__':
     app.run(debug=True)
