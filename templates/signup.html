@@ -336,129 +336,109 @@
             By creating an account, you agree to our Terms of Service and have read and understood our Privacy Policy.
         </div>
     </div>
-    
     <script>
-        // Password strength meter
-document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
-    const strengthMeter = document.getElementById('strength-meter');
-    const form = document.getElementById('signupForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const successAlert = document.getElementById('successAlert');
-    const errorAlert = document.getElementById('errorAlert');
-    
-    if (passwordInput && strengthMeter) {
-      passwordInput.addEventListener('input', function() {
-        const val = passwordInput.value;
-        let strength = 0;
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const strengthMeter = document.getElementById('strength-meter');
+            const form = document.getElementById('signupForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
         
-        if (val.length >= 8) strength += 25;
-        if (val.match(/[a-z]+/)) strength += 25;
-        if (val.match(/[A-Z]+/)) strength += 25;
-        if (val.match(/[0-9]+/)) strength += 25;
+            // Password strength meter
+            if (passwordInput && strengthMeter) {
+                passwordInput.addEventListener('input', function() {
+                    const val = passwordInput.value;
+                    let strength = 0;
         
-        strengthMeter.style.width = strength + '%';
+                    if (val.length >= 8) strength += 25;
+                    if (val.match(/[a-z]+/)) strength += 25;
+                    if (val.match(/[A-Z]+/)) strength += 25;
+                    if (val.match(/[0-9]+/)) strength += 25;
         
-        if (strength <= 25) {
-          strengthMeter.style.backgroundColor = '#ef4444';
-        } else if (strength <= 50) {
-          strengthMeter.style.backgroundColor = '#f97316';
-        } else if (strength <= 75) {
-          strengthMeter.style.backgroundColor = '#eab308';
-        } else {
-          strengthMeter.style.backgroundColor = '#22c55e';
-        }
-      });
-    }
-    
-    // Form submission
-    if (form) {
-      form.addEventListener('submit', async function(e) {
-        e.preventDefault();
+                    strengthMeter.style.width = strength + '%';
         
-        // Hide any existing alerts
-        successAlert.style.display = 'none';
-        errorAlert.style.display = 'none';
+                    if (strength <= 25) {
+                        strengthMeter.style.backgroundColor = '#ef4444'; // Red (Weak)
+                    } else if (strength <= 50) {
+                        strengthMeter.style.backgroundColor = '#f97316'; // Orange (Moderate)
+                    } else if (strength <= 75) {
+                        strengthMeter.style.backgroundColor = '#eab308'; // Yellow (Good)
+                    } else {
+                        strengthMeter.style.backgroundColor = '#22c55e'; // Green (Strong)
+                    }
+                });
+            }
         
-        // Show loading spinner
-        loadingSpinner.style.display = 'inline-block';
-        submitBtn.disabled = true;
+            // Form submission
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
         
-        try {
-          // Get form data
-          const formData = new FormData(form);
-          const userData = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            password: formData.get('password')
-          };
-          
-          // Send data to backend
-          const response = await fetch('/api/signup', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData)
-          });
-          
-          const data = await response.json();
-          
-          // Hide loading spinner
-          loadingSpinner.style.display = 'none';
-          submitBtn.disabled = false;
-          
-          if (response.ok) {
-            // Success
-            successAlert.textContent = data.message || 'Account created successfully!';
-            successAlert.style.display = 'block';
-            
-            // Reset form
-            form.reset();
-            if (strengthMeter) strengthMeter.style.width = '0%';
-            
-            // Redirect to dashboard
-            setTimeout(function() {
-              window.location.href = '/dashboard';
-            }, 2000);
-          } else {
-            // Error
-            errorAlert.textContent = data.message || 'An error occurred. Please try again.';
-            errorAlert.style.display = 'block';
-          }
-        } catch (error) {
-          console.error('Signup error:', error);
-          
-          // Hide loading spinner
-          loadingSpinner.style.display = 'none';
-          submitBtn.disabled = false;
-          
-          // Show error message
-          errorAlert.textContent = 'Connection error. Please try again later.';
-          errorAlert.style.display = 'block';
-        }
-      });
-    }
-    
-    // Social sign-in function with actual backend calls
-    window.socialSignIn = async function(provider) {
-      // Hide any existing alerts
-      if (successAlert) successAlert.style.display = 'none';
-      if (errorAlert) errorAlert.style.display = 'none';
-      
-      try {
-        // Redirect to the appropriate OAuth endpoint
-        window.location.href = `/auth/${provider}`;
-      } catch (error) {
-        console.error(`${provider} sign-in error:`, error);
-        if (errorAlert) {
-          errorAlert.textContent = 'Authentication error. Please try again.';
-          errorAlert.style.display = 'block';
-        }
-      }
-    };
-  });           
-    </script>
+                    if (successAlert) successAlert.style.display = 'none';
+                    if (errorAlert) errorAlert.style.display = 'none';
+                    if (loadingSpinner) loadingSpinner.style.display = 'inline-block';
+                    if (submitBtn) submitBtn.disabled = true;
+        
+                    try {
+                        const formData = new FormData(form);
+                        const userData = {
+                            name: formData.get('name'),
+                            email: formData.get('email'),
+                            password: formData.get('password')
+                        };
+        
+                        const response = await fetch('/api/signup', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(userData)
+                        });
+        
+                        const data = await response.json();
+        
+                        if (loadingSpinner) loadingSpinner.style.display = 'none';
+                        if (submitBtn) submitBtn.disabled = false;
+        
+                        if (response.ok) {
+                            if (successAlert) {
+                                successAlert.textContent = data.message || 'Account created successfully!';
+                                successAlert.style.display = 'block';
+                            }
+        
+                            form.reset();
+                            if (strengthMeter) strengthMeter.style.width = '0%';
+        
+                            setTimeout(() => window.location.href = '/dashboard', 2000);
+                        } else {
+                            if (errorAlert) {
+                                errorAlert.textContent = data.message || 'An error occurred. Please try again.';
+                                errorAlert.style.display = 'block';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Signup error:', error);
+        
+                        if (loadingSpinner) loadingSpinner.style.display = 'none';
+                        if (submitBtn) submitBtn.disabled = false;
+        
+                        if (errorAlert) {
+                            errorAlert.textContent = 'Connection error. Please try again later.';
+                            errorAlert.style.display = 'block';
+                        }
+                    }
+                });
+            }
+        
+            // Social sign-in function
+            window.socialSignIn = function(provider) {
+                if (successAlert) successAlert.style.display = 'none';
+                if (errorAlert) errorAlert.style.display = 'none';
+        
+                window.location.href = `/auth/${provider}`;
+            };
+        });
+        </script>
+        
 </body>
 </html>

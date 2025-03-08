@@ -254,5 +254,13 @@ def change_password():
         
     return render_template('change_password.html', title="Change Password")
 
+@app.route('/login/google')
+def google_login():
+    return "Google Login Route"
+
+@app.route('/login/facebook')
+def facebook_login():
+    return "Facebook Login Route"
+
 if __name__ == '__main__':
     app.run(debug=True)
