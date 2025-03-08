@@ -229,6 +229,42 @@
             transition: width 0.3s ease;
             border-radius: 3px;
         }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            display: none;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -238,30 +274,33 @@
         </div>
         <h2>Create Account</h2>
         
+        <div class="alert alert-success" id="successAlert">Successfully signed up! Redirecting...</div>
+        <div class="alert alert-error" id="errorAlert">An error occurred. Please try again.</div>
+        
         <div class="social-login">
-            <button class="social-btn">
+            <a href="#" onclick="socialSignIn('google')" class="social-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                 </svg>
-            </button>
-            <button class="social-btn">
+            </a>
+            <a href="#" onclick="socialSignIn('facebook')" class="social-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" fill="#1877F2"/>
                 </svg>
-            </button>
-            <button class="social-btn">
+            </a>
+            <a href="#" onclick="socialSignIn('apple')" class="social-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5.01 14.92c-.23.36-.7.57-1.18.57-.28 0-.56-.07-.82-.21-1.12-.6-2.3-1.06-3.53-1.36-.43.26-.91.41-1.42.41-.85 0-1.62-.37-2.15-1.05-.56-.72-.76-1.7-.54-2.6.29-1.17 1.4-2 2.66-2 .56 0 1.11.16 1.57.45.86-.54 1.78-1 2.75-1.37.3-.11.62-.04.88.17.27.22.41.54.39.88-.01.2-.07.37-.17.53.38.2.72.46.99.79.19.22.29.5.29.79 0 .29-.1.57-.28.8.03.4-.05.8-.23 1.14-.18.33-.45.61-.77.79.01.38-.11.75-.34 1.07z" fill="#000000"/>
                 </svg>
-            </button>
+            </a>
         </div>
         
         <div class="divider">or sign up with email</div>
         
-        <form action="/signup" method="POST">
+        <form id="signupForm">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" placeholder="John Doe" required>
@@ -285,7 +324,10 @@
                 <label for="terms">I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></label>
             </div>
 
-            <button type="submit">Create Account</button>
+            <button type="submit" id="submitBtn">
+                <span id="loadingSpinner" class="loading"></span>
+                Create Account
+            </button>
         </form>
         
         <p>Already have an account? <a href="/login">Sign in</a></p>
@@ -296,31 +338,127 @@
     </div>
     
     <script>
-        // Simple password strength meter
-        const passwordInput = document.getElementById('password');
-        const strengthMeter = document.getElementById('strength-meter');
+        // Password strength meter
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const strengthMeter = document.getElementById('strength-meter');
+    const form = document.getElementById('signupForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const successAlert = document.getElementById('successAlert');
+    const errorAlert = document.getElementById('errorAlert');
+    
+    if (passwordInput && strengthMeter) {
+      passwordInput.addEventListener('input', function() {
+        const val = passwordInput.value;
+        let strength = 0;
         
-        passwordInput.addEventListener('input', function() {
-            const val = passwordInput.value;
-            let strength = 0;
+        if (val.length >= 8) strength += 25;
+        if (val.match(/[a-z]+/)) strength += 25;
+        if (val.match(/[A-Z]+/)) strength += 25;
+        if (val.match(/[0-9]+/)) strength += 25;
+        
+        strengthMeter.style.width = strength + '%';
+        
+        if (strength <= 25) {
+          strengthMeter.style.backgroundColor = '#ef4444';
+        } else if (strength <= 50) {
+          strengthMeter.style.backgroundColor = '#f97316';
+        } else if (strength <= 75) {
+          strengthMeter.style.backgroundColor = '#eab308';
+        } else {
+          strengthMeter.style.backgroundColor = '#22c55e';
+        }
+      });
+    }
+    
+    // Form submission
+    if (form) {
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Hide any existing alerts
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
+        
+        // Show loading spinner
+        loadingSpinner.style.display = 'inline-block';
+        submitBtn.disabled = true;
+        
+        try {
+          // Get form data
+          const formData = new FormData(form);
+          const userData = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            password: formData.get('password')
+          };
+          
+          // Send data to backend
+          const response = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+          });
+          
+          const data = await response.json();
+          
+          // Hide loading spinner
+          loadingSpinner.style.display = 'none';
+          submitBtn.disabled = false;
+          
+          if (response.ok) {
+            // Success
+            successAlert.textContent = data.message || 'Account created successfully!';
+            successAlert.style.display = 'block';
             
-            if (val.length >= 8) strength += 25;
-            if (val.match(/[a-z]+/)) strength += 25;
-            if (val.match(/[A-Z]+/)) strength += 25;
-            if (val.match(/[0-9]+/)) strength += 25;
+            // Reset form
+            form.reset();
+            if (strengthMeter) strengthMeter.style.width = '0%';
             
-            strengthMeter.style.width = strength + '%';
-            
-            if (strength <= 25) {
-                strengthMeter.style.backgroundColor = '#ef4444';
-            } else if (strength <= 50) {
-                strengthMeter.style.backgroundColor = '#f97316';
-            } else if (strength <= 75) {
-                strengthMeter.style.backgroundColor = '#eab308';
-            } else {
-                strengthMeter.style.backgroundColor = '#22c55e';
-            }
-        });
+            // Redirect to dashboard
+            setTimeout(function() {
+              window.location.href = '/dashboard';
+            }, 2000);
+          } else {
+            // Error
+            errorAlert.textContent = data.message || 'An error occurred. Please try again.';
+            errorAlert.style.display = 'block';
+          }
+        } catch (error) {
+          console.error('Signup error:', error);
+          
+          // Hide loading spinner
+          loadingSpinner.style.display = 'none';
+          submitBtn.disabled = false;
+          
+          // Show error message
+          errorAlert.textContent = 'Connection error. Please try again later.';
+          errorAlert.style.display = 'block';
+        }
+      });
+    }
+    
+    // Social sign-in function with actual backend calls
+    window.socialSignIn = async function(provider) {
+      // Hide any existing alerts
+      if (successAlert) successAlert.style.display = 'none';
+      if (errorAlert) errorAlert.style.display = 'none';
+      
+      try {
+        // Redirect to the appropriate OAuth endpoint
+        window.location.href = `/auth/${provider}`;
+      } catch (error) {
+        console.error(`${provider} sign-in error:`, error);
+        if (errorAlert) {
+          errorAlert.textContent = 'Authentication error. Please try again.';
+          errorAlert.style.display = 'block';
+        }
+      }
+    };
+  });           
     </script>
 </body>
 </html>
