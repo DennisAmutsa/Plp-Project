@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request,jsonify, redirect, url_for, session, flash
 import pymysql
 import bcrypt
 import os
@@ -37,24 +37,40 @@ def home():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not name or not email or not password:
+            flash("All fields are required!", "danger")
+            return redirect(url_for("signup"))
 
         conn = connect_db()
         cursor = conn.cursor()
-        try:
-            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
-            conn.commit()
-            flash('Signup successful! Please log in.', 'success')
-            return redirect(url_for('login'))
-        except pymysql.MySQLError:
-            flash('Error signing up. Try again.', 'danger')
-        finally:
+
+        # Check if email already exists
+        cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            flash("Email is already registered. Please log in.", "warning")
             conn.close()
-    
-    return render_template('signup.html', title="Sign Up")
+            return redirect(url_for("login"))
+
+        # Hash the password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+        # Insert into the database
+        cursor.execute("INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, 'user')",
+                       (name, email, hashed_password))
+
+        conn.commit()
+        conn.close()
+
+        flash("Account created successfully! Please log in.", "success")
+        return redirect(url_for("login"))
+
+    return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -77,6 +93,7 @@ def login():
             flash('Invalid credentials, try again.', 'danger')
 
     return render_template('login.html', title="Login")
+
 
 @app.route('/dashboard')
 def dashboard():
@@ -158,23 +175,30 @@ def about():
     return render_template('about.html', title="About Us")
 
 @app.route('/reports', methods=['GET', 'POST'])
-def reports():
+def reports():  # Adjusted the function name to 'reports' for consistency
     if request.method == 'POST':
         if 'user_id' not in session:
             flash('You must be logged in to submit a report.', 'warning')
             return redirect(url_for('login'))
-        
+
         report_text = request.form['report']
         user_id = session['user_id']
 
         conn = connect_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO reports (user_id, report_text) VALUES (%s, %s)", (user_id, report_text))
-        conn.commit()
-        conn.close()
-        flash('Report submitted successfully!', 'success')
+
+        try:
+            cursor.execute("INSERT INTO reports (user_id, report_text) VALUES (%s, %s)", (user_id, report_text))
+            conn.commit()
+            flash('Report submitted successfully!', 'success')
+        except pymysql.MySQLError as e:
+            print("Database Error:", e)
+            flash('Error submitting report. Please try again.', 'danger')
+        finally:
+            conn.close()
 
     return render_template('reports.html', title="Reports")
+
 
 @app.route('/health')
 def health():
@@ -261,6 +285,52 @@ def google_login():
 @app.route('/login/facebook')
 def facebook_login():
     return "Facebook Login Route"
+
+@app.route("/admin/manage-users")
+def manage_users():
+    connection = connect_db()
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, name, email, role, status FROM users")  # Ensure 'status' column exists
+        users = cursor.fetchall()
+    connection.close()
+    return render_template("manage_users.html", users=users)
+
+@app.route("/admin/promote/<int:user_id>")
+def promote_user(user_id):
+    connection = connect_db()
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE users SET role = 'admin' WHERE id = %s", (user_id,))
+        connection.commit()
+    connection.close()
+    return redirect(url_for("manage_users"))
+
+@app.route("/admin/demote/<int:user_id>")
+def demote_user(user_id):
+    connection = connect_db()
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE users SET role = 'user' WHERE id = %s", (user_id,))
+        connection.commit()
+    connection.close()
+    return redirect(url_for("manage_users"))
+
+@app.route("/admin/suspend/<int:user_id>")
+def suspend_user(user_id):
+    connection = connect_db()
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE users SET status = 'suspended' WHERE id = %s", (user_id,))
+        connection.commit()
+    connection.close()
+    return redirect(url_for("manage_users"))
+
+@app.route("/admin/activate/<int:user_id>")
+def activate_user(user_id):
+    connection = connect_db()
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE users SET status = 'active' WHERE id = %s", (user_id,))
+        connection.commit()
+    connection.close()
+    return redirect(url_for("manage_users"))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
